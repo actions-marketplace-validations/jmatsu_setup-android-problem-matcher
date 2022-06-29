@@ -4,7 +4,11 @@ inputs:
   matchers:
     default: 'kotlin_gradle,android_lint_gradle,junit_gradle'
     required: false
-    description: 'A comma separated list of problem matcher identifiers (case insensitive) to import'
+    description: 'A comma separated list of problem matcher identifiers'
+  exclude:
+    default: 'false'
+    required: false
+    description: 'Specify true if you would like to use the *matchers* to exclude'
 runs:
   using: node16
   main: index.js
