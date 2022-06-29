@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
-      - uses: jmatsu/android-problem-matcher@v1
+      - uses: jmatsu/setup-android-problem-matcher@v1
       - run: ./gradlew ...
 ```
 
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
-      - uses: jmatsu/android-problem-matcher@v1
+      - uses: jmatsu/setup-android-problem-matcher@v1
         with:
           matchers: <matchers you would like to include>
           # don't need to specify exclude input
@@ -52,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
-      - uses: jmatsu/android-problem-matcher@v1
+      - uses: jmatsu/setup-android-problem-matcher@v1
         with:
           matchers: <matchers you would like to exclude>
           exclude: true
