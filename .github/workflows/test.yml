@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  for-each:
+  for-each-matches:
     strategy:
       matrix:
         matcher-name:
@@ -15,9 +15,7 @@ jobs:
           - android_lint_gradle
           - kotlin_gradle
         gradle-args:
-          - testDebugUnitTest
-          - lintDebug
-          - 'assembleWarn assembleErr --continue'
+          - 'testDebugUnitTest lintDebug assembleWarn assembleErr --continue'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,19 +26,31 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-      - run: './gradlew ${{ matrix.gradle-args }} || true'
+      - run: ./gradlew ${{ matrix.gradle-args }}
         working-directory: sample
+        continue-on-error: true
 
-  all:
+  check-exclude:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./
-      - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
-      - run: './gradlew testDebugUnitTest lintDebug assembleWarn assembleErr --continue || true'
-        working-directory: sample
-
-  
+          matchers: ${{ matrix.matcher-name }}
+          exclude: true
+      - run: |
+          node ./index.js | tee 1.txt
+          cat < 1.txt | grep "junit_gradle is excluded"
+          cat < 1.txt | grep "android_lint_gradle is allowed"
+          cat < 1.txt | grep "kotlin_gradle is allowed"
+        env:
+          INPUT_MATCHERS: junit_gradle
+          INPUT_EXCLUDE: 'true'
+      - run: |
+          node ./index.js | tee 1.txt
+          cat < 1.txt | grep "junit_gradle is excluded"
+          cat < 1.txt | grep "android_lint_gradle is excluded"
+          cat < 1.txt | grep "kotlin_gradle is allowed"
+        env:
+          INPUT_MATCHERS: junit_gradle,android_lint_gradle
+          INPUT_EXCLUDE: 'true'

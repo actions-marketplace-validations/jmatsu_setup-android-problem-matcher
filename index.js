@@ -1,28 +1,33 @@
-const matchersInput = process.env.INPUT_MATCHERS;
+const inputs = {
+    matchers: (process.env.INPUT_MATCHERS || '').toLowerCase().split(","),
+    exclude: (process.env.INPUT_EXCLUDE || '').toLowerCase() === 'true',
+}
 
-if (!matchersInput) {
+if (!inputs.exclude && inputs.matchers.length === 0) {
+    console.log(`::warning::no matcher is found`);
     return;
 }
 
-const matchers = matchersInput.split(",");
+const ALL_MATCHERS = [
+    'android_lint_gradle',
+    'junit_gradle',
+    'kotlin_gradle',
+]
 
-if (matchers.length === 0) {
-    console.log(`::warning::no matcher is found`);
-    return
-}
+const targetMatchers = inputs.exclude ? ALL_MATCHERS : inputs.matchers;
 
-for (const matcher of matchers) {
-    const lowerMatcher = matcher.toLowerCase();
+for (const matcher of targetMatchers) {
+    if (inputs.exclude) {
+        if (inputs.matchers.indexOf(matcher) >= 0) {
+            console.log(`${matcher} is excluded`);
+            continue
+        }
+    }
 
-    switch (lowerMatcher) {
-        case 'kotlin_gradle':
-        case 'android_lint_gradle':
-        case 'junit_gradle':
-            console.log(`::debug::${matcher} is allowed`);
-            console.log(`::add-matcher::${process.env.GITHUB_ACTION_PATH}/${lowerMatcher}/problem_matcher.json`);
-            break;
-        default:
-            console.log(`::warning::${matcher} is unknown`);
-            break;
+    if (ALL_MATCHERS.indexOf(matcher) >= 0) {
+        console.log(`${matcher} is allowed`);
+        console.log(`::add-matcher::./${matcher}/problem_matcher.json`);
+    } else {
+        console.log(`::warning::${matcher} is unknown`);
     }
 }
