@@ -1,0 +1,1 @@
+{ "problemMatcher": [.tasks[] | .problemMatcher | { "severity": .severity, "owner": .owner, "pattern": .pattern } ] }

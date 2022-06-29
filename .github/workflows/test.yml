@@ -1,0 +1,46 @@
+name: Check the matchers
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  for-each:
+    strategy:
+      matrix:
+        matcher-name:
+          - junit_gradle
+          - android_lint_gradle
+          - kotlin_gradle
+        gradle-args:
+          - testDebugUnitTest
+          - lintDebug
+          - 'assembleWarn assembleErr --continue'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          matchers: ${{ matrix.matcher-name }}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - run: './gradlew ${{ matrix.gradle-args }} || true'
+        working-directory: sample
+
+  all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - run: './gradlew testDebugUnitTest lintDebug assembleWarn assembleErr --continue || true'
+        working-directory: sample
+
+  

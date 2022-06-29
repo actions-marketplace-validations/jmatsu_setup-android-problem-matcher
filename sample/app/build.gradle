@@ -1,0 +1,73 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "io.github.jmatsu.pms"
+        minSdk 26
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        warn {
+
+        }
+        err {
+
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    lint {
+        // turn on stdout report
+        textReport true
+        textOutput 'stdout'
+        
+        // relative paths are currently not supported (true by default)
+        absolutePaths true
+
+        ignoreWarnings false
+        error "AllowBackup"
+        warning "MissingTranslation"
+        fatal "LogConditional"
+    }
+
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen {false}
+                showStandardStreams = true
+                displayGranularity = 2 // never support 3
+                exceptionFormat = TestExceptionFormat.SHORT // FULL is also supported
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.4.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}

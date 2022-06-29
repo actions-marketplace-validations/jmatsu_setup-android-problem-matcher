@@ -1,0 +1,13 @@
+name: Android Problem Matcher
+description: Add problem matchers for Android development (Gradle)
+inputs:
+  matchers:
+    default: 'kotlin_gradle,android_lint_gradle,junit_gradle'
+    required: false
+    description: 'A comma separated list of problem matcher identifiers (case insensitive) to import'
+runs:
+  using: node16
+  main: index.js
+branding:
+  color: red
+  icon: flag
